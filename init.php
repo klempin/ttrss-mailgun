@@ -108,10 +108,12 @@ EOT;
             $post["html"] = $params["message_html"];
         }
 
-        foreach ($params["headers"] as $key => $header) {
-            if (strpos(strtolower($header), "reply-to") !== false) {
-                $replyTo = str_ireplace("reply-to: ", "", $header);
-                $post["h:Reply-To"] = $replyTo;
+        if (array_key_exists("headers", $params)) {
+            foreach ($params["headers"] as $key => $header) {
+                if (strpos(strtolower($header), "reply-to") !== false) {
+                    $replyTo = str_ireplace("reply-to: ", "", $header);
+                    $post["h:Reply-To"] = $replyTo;
+                }
             }
         }
 
