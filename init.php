@@ -116,7 +116,7 @@ EOT;
         }
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, MAILGUN_API_BASE_URL);
+        curl_setopt($ch, CURLOPT_URL, MAILGUN_API_BASE_URL . "/messages");
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_USERPWD, MAILGUN_API_KEY);
