@@ -119,7 +119,7 @@ EOT;
         curl_setopt($ch, CURLOPT_URL, MAILGUN_API_BASE_URL . "/messages");
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERPWD, MAILGUN_API_KEY);
+        curl_setopt($ch, CURLOPT_USERPWD, "api:" . MAILGUN_API_KEY);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
         $response = curl_exec($ch);
         $responseCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
