@@ -1,4 +1,4 @@
-# TT-RSS Mailgun
+# TT-RSS Mailgun Plugin
 
 Setup [Tiny Tiny RSS](https://tt-rss.org/) to send emails using the [Mailgun](https://www.mailgun.com/) API.
 

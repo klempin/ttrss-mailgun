@@ -43,7 +43,7 @@ class Mailgun extends Plugin
             $msg = <<< EOT
 <div class="alert alert-danger">
     There are errors in you TTRSS-Mailgun configuration. Please check the
-    <a href="https://github.com/klempin/ttrss-mailgun">setup guide</a>.
+    <a href="https://github.com/klempin/ttrss-mailgun#installation">setup guide</a>.
 </div>
 EOT;
         }
@@ -141,7 +141,7 @@ EOT;
             "Send emails using the Mailgun API",
             "Philip Klempin",
             true,
-            "https://github.com/klempin"
+            "https://github.com/klempin/ttrss-mailgun"
         );
     }
 
