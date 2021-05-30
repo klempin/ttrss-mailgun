@@ -30,13 +30,21 @@ class Mailgun extends Plugin
             $apiKey = "<span class=\"error\">undefined</span>";
         }
 
-        $fromName = SMTP_FROM_NAME;
-
-        if ($this->fromEmailValid() || !$this->apiBaseUrlValid()) {
-            $fromEmail = SMTP_FROM_ADDRESS;
+        if (defined('SMTP_FROM_NAME')) {
+            $fromName = SMTP_FROM_NAME;
         } else {
             $configCorrect = false;
+            $fromName = '<span class="error">undefined</span>';
+        }
+
+        if ($this->fromEmailValid()) {
+            $fromEmail = SMTP_FROM_ADDRESS;
+        } elseif (defined('SMTP_FROM_ADDRESS')) {
+            $configCorrect = false;
             $fromEmail = "<span class=\"error\">invalid: </span>" . SMTP_FROM_ADDRESS;
+        } else {
+            $configCorrect = false;
+            $fromEmail = '<span class="error">undefined</span>';
         }
 
         if (!$configCorrect) {
@@ -162,6 +170,10 @@ EOT;
 
     private function fromEmailValid()
     {
+        if (!defined('SMTP_FROM_ADDRESS')) {
+            return false;
+        }
+
         if (filter_var(SMTP_FROM_ADDRESS, FILTER_VALIDATE_EMAIL) === false) {
             return false;
         }
