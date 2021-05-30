@@ -23,7 +23,7 @@ class Mailgun extends Plugin
 
     public function hook_prefs_tab($args)
     {
-        if ($args !== "prefPrefs" || $_SESSION["access_level"] < 10) {
+        if ($args !== "prefFeeds" || $_SESSION["access_level"] < 10) {
             return;
         }
 
