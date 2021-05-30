@@ -85,15 +85,17 @@ EOT;
         }
 
         echo <<<EOT
-<div id="prefs-mailgun" data-dojo-type="dijit/layout/ContentPane" title="<i class='material-icons'>email</i> Mailgun">
+<div dojoType="dijit.layout.AccordionPane" id="prefs-mailgun" title="<i class='material-icons'>email</i> Mailgun">
     <h3>Current Mailgun settings</h3>
     {$msg}
+
     <table>
         <tr><td>API base URL</td><td>{$baseUrl}</td></tr>
         <tr><td>API key</td><td>{$apiKey}</td></tr>
         <tr><td>Sender name</td><td>{$fromName}</td></tr>
         <tr><td>Sender email address</td><td>{$fromEmail}</td></tr>
     </table>
+
     <style>
         #prefs-mailgun {
             display: flex;
@@ -112,19 +114,19 @@ EOT;
     {
         if (!$this->apiBaseUrlValid()) {
             $mailer->set_error("Email could not be sent. Please specify your API " .
-                "base URL (MAILGUN_API_BASE_URL) in your config.php file.");
+                "base URL (MAILGUN_API_BASE_URL).");
             return 0;
         }
 
         if (!$this->apiKeyValid()) {
             $mailer->set_error("Email could not be sent. Please specify your API " .
-                "key (MAILGUN_API_KEY) in your config.php file.");
+                "key (MAILGUN_API_KEY).");
             return 0;
         }
 
         if (!$this->fromEmailValid()) {
             $mailer->set_error("Email could not be sent. Please specify a valid " .
-                "from address (SMTP_FROM_ADDRESS) in your config.php file.");
+                "from address (MAILGUN_FROM_ADDRESS).");
             return 0;
         }
 
@@ -145,7 +147,7 @@ EOT;
         }
 
         if (array_key_exists("headers", $params)) {
-            foreach ($params["headers"] as $key => $header) {
+            foreach ($params["headers"] as $header) {
                 if (strpos(strtolower($header), "reply-to") !== false) {
                     $replyTo = str_ireplace("reply-to: ", "", $header);
                     $post["h:Reply-To"] = $replyTo;
@@ -166,6 +168,7 @@ EOT;
         if ($responseCode === 200) {
             return 1;
         } else {
+            $mailer->set_error($response);
             return 0;
         }
     }
