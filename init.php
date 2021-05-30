@@ -44,7 +44,7 @@ class Mailgun extends Plugin
             $apiKey = "<span class=\"error\">invalid</span>";
         }
 
-        if (strlen(Config::get('MAILGUN_FROM_NAME')) !== 0) {
+        if ($this->fromNameValid()) {
             $fromName = Config::get('MAILGUN_FROM_NAME');
         } else {
             $configCorrect = false;
@@ -188,6 +188,11 @@ EOT;
     private function apiKeyValid()
     {
         return strlen(Config::get('MAILGUN_API_KEY')) > 0;
+    }
+
+    private function fromNameValid()
+    {
+        return strlen(Config::get('MAILGUN_FROM_NAME')) > 0;
     }
 
     private function fromEmailValid()
