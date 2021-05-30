@@ -47,6 +47,7 @@ class Mailgun extends Plugin
             $fromEmail = '<span class="error">undefined</span>';
         }
 
+        $msg = '';
         if (!$configCorrect) {
             $msg = <<< EOT
 <div class="alert alert-danger">
