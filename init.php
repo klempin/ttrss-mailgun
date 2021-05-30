@@ -90,10 +90,26 @@ EOT;
     {$msg}
 
     <table>
-        <tr><td>API base URL</td><td>{$baseUrl}</td></tr>
-        <tr><td>API key</td><td>{$apiKey}</td></tr>
-        <tr><td>Sender name</td><td>{$fromName}</td></tr>
-        <tr><td>Sender email address</td><td>{$fromEmail}</td></tr>
+        <tr>
+            <td>API base URL</td>
+            <td>TTRSS_MAILGUN_API_BASE_URL</td>
+            <td>{$baseUrl}</td>
+        </tr>
+        <tr>
+            <td>API key</td>
+            <td>TTRSS_MAILGUN_API_KEY</td>
+            <td>{$apiKey}</td>
+        </tr>
+        <tr>
+            <td>Sender name</td>
+            <td>TTRSS_MAILGUN_FROM_NAME</td>
+            <td>{$fromName}</td>
+        </tr>
+        <tr>
+            <td>Sender email address</td>
+            <td>TTRSS_MAILGUN_FROM_ADDRESS</td>
+            <td>{$fromEmail}</td>
+        </tr>
     </table>
 
     <style>
