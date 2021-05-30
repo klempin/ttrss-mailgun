@@ -6,6 +6,19 @@ class Mailgun extends Plugin
     {
         $host->add_hook($host::HOOK_PREFS_TAB, $this);
         $host->add_hook($host::HOOK_SEND_MAIL, $this);
+
+        foreach ([
+            ['MAILGUN_API_BASE_URL', 'MAILGUN_API_BASE_URL'],
+            ['MAILGUN_API_KEY', 'MAILGUN_API_KEY'],
+            ['MAILGUN_FROM_NAME', 'SMTP_FROM_NAME'],
+            ['MAILGUN_FROM_ADDRESS', 'SMTP_FROM_ADDRESS']
+        ] as $config) {
+            if (defined($config[1])) {
+                Config::add($config[0], constant($config[1]));
+            } else {
+                Config::add($config[0], '');
+            }
+        }
     }
 
     public function hook_prefs_tab($args)
@@ -17,34 +30,32 @@ class Mailgun extends Plugin
         $configCorrect = true;
 
         if ($this->apiBaseUrlValid()) {
-            $baseUrl = MAILGUN_API_BASE_URL;
+            $baseUrl = Config::get('MAILGUN_API_BASE_URL');
         } else {
             $configCorrect = false;
             $baseUrl = "<span class=\"error\">undefined</span>";
         }
 
         if ($this->apiKeyValid()) {
-            $apiKey = substr(MAILGUN_API_KEY, 0, 6) . "*********************";
+            $apiKey = Config::get('MAILGUN_API_KEY');
+            $apiKey = substr($apiKey, 0, 6) . str_repeat('*', strlen($apiKey) - 6);
         } else {
             $configCorrect = false;
-            $apiKey = "<span class=\"error\">undefined</span>";
+            $apiKey = "<span class=\"error\">invalid</span>";
         }
 
-        if (defined('SMTP_FROM_NAME')) {
-            $fromName = SMTP_FROM_NAME;
+        if (strlen(Config::get('MAILGUN_FROM_NAME')) !== 0) {
+            $fromName = Config::get('MAILGUN_FROM_NAME');
         } else {
             $configCorrect = false;
             $fromName = '<span class="error">undefined</span>';
         }
 
         if ($this->fromEmailValid()) {
-            $fromEmail = SMTP_FROM_ADDRESS;
-        } elseif (defined('SMTP_FROM_ADDRESS')) {
-            $configCorrect = false;
-            $fromEmail = "<span class=\"error\">invalid: </span>" . SMTP_FROM_ADDRESS;
+            $fromEmail = Config::get('MAILGUN_FROM_ADDRESS');
         } else {
             $configCorrect = false;
-            $fromEmail = '<span class="error">undefined</span>';
+            $fromEmail = '<span class="error">invalid: ' . Config::get('MAILGUN_FROM_ADDRESS') . '</span>';
         }
 
         $msg = '';
@@ -107,7 +118,7 @@ EOT;
         }
 
         $post = array(
-            "from" => SMTP_FROM_NAME . " <" . SMTP_FROM_ADDRESS . ">",
+            "from" => Config::get('MAILGUN_FROM_NAME') . " <" . Config::get('MAILGUN_FROM_ADDRESS') . ">",
             "to" => $params["to_name"] . " <" . $params["to_address"] . ">",
             "subject" => $params["subject"],
             "text" => $params["message"]
@@ -127,10 +138,10 @@ EOT;
         }
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, MAILGUN_API_BASE_URL . "/messages");
+        curl_setopt($ch, CURLOPT_URL, Config::get('MAILGUN_API_BASE_URL') . "/messages");
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERPWD, "api:" . MAILGUN_API_KEY);
+        curl_setopt($ch, CURLOPT_USERPWD, "api:" . Config::get('MAILGUN_API_KEY'));
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
         $response = curl_exec($ch);
         $responseCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
@@ -161,21 +172,29 @@ EOT;
 
     private function apiBaseUrlValid()
     {
-        return defined("MAILGUN_API_BASE_URL");
+        $url = Config::get('MAILGUN_API_BASE_URL');
+
+        if (strlen($url) < 26) {
+            return false;
+        }
+
+        if (strpos($url, 'https://api.mailgun.net/v3') !== 0 && strpos($url, 'https://api.eu.mailgun.net/v3') !== 0) {
+            return false;
+        }
+
+        return true;
     }
 
     private function apiKeyValid()
     {
-        return defined("MAILGUN_API_KEY");
+        return strlen(Config::get('MAILGUN_API_KEY')) > 0;
     }
 
     private function fromEmailValid()
     {
-        if (!defined('SMTP_FROM_ADDRESS')) {
-            return false;
-        }
+        $from = Config::get('MAILGUN_FROM_ADDRESS');
 
-        if (filter_var(SMTP_FROM_ADDRESS, FILTER_VALIDATE_EMAIL) === false) {
+        if (filter_var($from, FILTER_VALIDATE_EMAIL) === false) {
             return false;
         }
 
@@ -183,9 +202,10 @@ EOT;
             return false;
         }
 
-        if (strpos(MAILGUN_API_BASE_URL, substr(SMTP_FROM_ADDRESS, strrpos(SMTP_FROM_ADDRESS, "@") + 1)) === false) {
+        if (strpos($from, substr($from, strrpos($from, "@") + 1)) === false) {
             return false;
         }
+
         return true;
     }
 }
