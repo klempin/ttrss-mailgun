@@ -2,6 +2,22 @@
 
 class Mailgun extends Plugin
 {
+    public function about()
+    {
+        return array(
+            null,
+            "Send emails using the Mailgun API",
+            "Philip Klempin",
+            true,
+            "https://github.com/klempin/ttrss-mailgun"
+        );
+    }
+
+    public function api_version()
+    {
+        return 2;
+    }
+
     public function init($host)
     {
         $host->add_hook($host::HOOK_PREFS_TAB, $this);
@@ -152,22 +168,6 @@ EOT;
         } else {
             return 0;
         }
-    }
-
-    public function about()
-    {
-        return array(
-            1.0,
-            "Send emails using the Mailgun API",
-            "Philip Klempin",
-            true,
-            "https://github.com/klempin/ttrss-mailgun"
-        );
-    }
-
-    public function api_version()
-    {
-        return 2;
     }
 
     private function apiBaseUrlValid()
